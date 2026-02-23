@@ -8,4 +8,4 @@
 
 点击下方按钮，使用 [Tampermonkey](https://www.tampermonkey.net/) 或 [Violentmonkey](https://violentmonkey.github.io/) 一键安装本脚本：
 
-[使用 Tampermonkey 安装](https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/04/main.js)
+[使用 Tampermonkey 安装](https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/04/main.user.js)
