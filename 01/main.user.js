@@ -7,8 +7,8 @@
 // @match        https://xn--o1qx19eeqi.cn/*
 // @icon         https://xn--o1qx19eeqi.cn/favicon.ico
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/01/main.js
-// @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/01/main.js
+// @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/01/main.user.js
+// @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/01/main.user.js
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE
 // ==/UserScript==
 

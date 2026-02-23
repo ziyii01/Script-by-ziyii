@@ -7,8 +7,8 @@
 // @match        *://www.bilibili.com/video*
 // @icon         https://bgm.tv/img/favicon.ico
 // @grant        none
-// @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/03/main.js
-// @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/03/main.js
+// @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/03/main.user.js
+// @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/03/main.user.js
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE
 // ==/UserScript==
 
