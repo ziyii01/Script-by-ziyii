@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         pbh论坛自动刷新
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.02.23
+// @version      2026.02.26
 // @description  pbh论坛自动刷新
 // @author       ziyii
 // @match        *://bbs.pbh-btn.com/*
 // @icon         https://bbs.pbh-btn.com/assets/favicon-u4szmw9m.png
-// @grant        none
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_registerMenuCommand
 // @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/04/main.user.js
 // @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/04/main.user.js
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE
@@ -16,7 +18,68 @@
   ("use strict");
 
   let refreshTimer = null;
-  const refreshInterval = 30 * 1000; // 30秒
+  const DEFAULT_INTERVAL = 60; // 默认60秒
+
+  /**
+   * 从脚本存储中读取用户自定义的刷新间隔（单位：秒）。
+   *
+   * 如果未设置或存储的值无效（如非数字、小于等于0），则返回默认刷新间隔。
+   *
+   * @returns {number} 有效的刷新间隔（秒），始终为大于0的数字。
+   * @see {@link DEFAULT_INTERVAL}
+   * @see {@link GM_getValue}
+   */
+  function getRefreshIntervalSec() {
+    const saved = GM_getValue("refreshInterval", DEFAULT_INTERVAL);
+    const num = Number(saved);
+    return isNaN(num) || num <= 0 ? DEFAULT_INTERVAL : num;
+  }
+
+  /**
+   * 将用户指定的刷新间隔（单位：秒）保存到脚本存储中。
+   *
+   * 仅当输入值为大于0的数字时才会执行保存操作，以确保数据有效性。
+   *
+   * @param {number} seconds - 要保存的刷新间隔（秒），必须为正数。
+   * @see {@link GM_setValue}
+   */
+  function setRefreshIntervalSec(seconds) {
+    if (typeof seconds === "number" && seconds > 0) {
+      GM_setValue("refreshInterval", seconds);
+    }
+  }
+
+  /**
+   * 打开用户设置对话框，允许用户自定义自动刷新的时间间隔。
+   *
+   * 该函数会弹出一个 prompt 输入框，显示当前刷新间隔作为默认值。
+   *
+   * 用户输入后，函数会校验输入是否为大于0的数字：
+   * - 若输入无效（非数字、≤0 或取消），则提示错误或直接退出；
+   * - 若输入有效，则保存新值并通过 alert 提示用户需刷新页面生效。
+   *
+   * @note 修改设置后需手动刷新页面，新间隔才会在下次自动刷新中生效。
+   */
+  function openSettings() {
+    const current = getRefreshIntervalSec();
+    const input = prompt(
+      "[PBH 自动刷新] 请输入刷新间隔（单位：秒，建议 ≥5）：",
+      String(current),
+    );
+    if (input === null) return; // 用户点击取消
+
+    const seconds = Number(input.trim());
+    if (isNaN(seconds) || seconds <= 0) {
+      alert("[错误] 请输入一个大于0的数字！");
+      return;
+    }
+
+    setRefreshIntervalSec(seconds);
+    alert(`✅ 刷新间隔已更新为 ${seconds} 秒。\n请刷新页面以应用新设置。`);
+  }
+
+  // 注册 Tampermonkey 菜单项
+  GM_registerMenuCommand("⚙️ 设置刷新间隔", openSettings);
 
   /**
    * 查找页面中的“刷新”按钮元素。
@@ -83,7 +146,10 @@
     if (!isHomePage()) return;
 
     console.log("[PBH Auto Refresh] 在首页，启动自动刷新");
-    refreshTimer = setInterval(clickRefreshButton, refreshInterval);
+    refreshTimer = setInterval(
+      clickRefreshButton,
+      getRefreshIntervalSec() * 1000,
+    );
   }
 
   /**
