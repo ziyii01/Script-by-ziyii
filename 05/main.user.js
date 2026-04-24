@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.03.23
+// @version      2026.03.24
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -30,6 +30,7 @@
     MAX_INTERVAL: "maxInterval", // 点赞最大间隔（秒）
     AUTO_REPEAT: "autoRepeatHourly", // 是否每小时自动重复执行
     GIFT_BLOCKED: "isGiftBlocked", // 礼物屏蔽状态
+    HEADER_HIDDEN: "isHeaderHidden", // 顶栏隐藏状态
   };
 
   const DEFAULT_CONFIG = {
@@ -40,10 +41,12 @@
     maxInterval: 1,
     autoRepeatHourly: true,
     isGiftBlocked: false,
+    isHeaderHidden: false,
   };
 
   const UI_CONSTANTS = {
     GIFT_CONTAINER_ID: "BottomLayout",
+    HEADER_LAYOUT_ID: "HeaderLayout", // 顶栏元素ID
     TIP_DURATION: 3000, // 提示显示时长（毫秒）
     TIP_FADE_DURATION: 500, // 提示淡出时长（毫秒）
     HOURLY_INTERVAL: 3600000, // 1小时的毫秒数
@@ -80,6 +83,10 @@
       isGiftBlocked: GM_getValue(
         CONFIG_KEYS.GIFT_BLOCKED,
         DEFAULT_CONFIG.isGiftBlocked,
+      ),
+      isHeaderHidden: GM_getValue(
+        CONFIG_KEYS.HEADER_HIDDEN,
+        DEFAULT_CONFIG.isHeaderHidden,
       ),
     };
   }
@@ -185,6 +192,62 @@
     });
 
     console.log("[AutoLike] 礼物屏蔽监听器已启动");
+  }
+
+  // ======================
+  // 顶栏隐藏功能
+  // ======================
+
+  /**
+   * 应用顶栏隐藏状态到DOM
+   */
+  function applyHeaderHiddenState() {
+    const { isHeaderHidden } = getConfig();
+    const headerLayout = document.getElementById(UI_CONSTANTS.HEADER_LAYOUT_ID);
+
+    if (headerLayout) {
+      headerLayout.style.display = isHeaderHidden ? "none" : "";
+    }
+  }
+
+  /**
+   * 切换顶栏隐藏状态的开启/关闭
+   */
+  function toggleHeaderHidden() {
+    let { isHeaderHidden } = getConfig();
+    const headerLayout = document.getElementById(UI_CONSTANTS.HEADER_LAYOUT_ID);
+
+    if (headerLayout) {
+      isHeaderHidden = !isHeaderHidden;
+      setConfig(CONFIG_KEYS.HEADER_HIDDEN, isHeaderHidden);
+      headerLayout.style.display = isHeaderHidden ? "none" : "";
+
+      GM_notification({
+        text: isHeaderHidden ? "已隐藏顶栏" : "已显示顶栏",
+        timeout: 5000,
+      });
+    }
+  }
+
+  /**
+   * 设置MutationObserver监听DOM变化并应用顶栏隐藏
+   */
+  function setupHeaderHiddenObserver() {
+    // 页面加载后应用初始状态
+    setTimeout(applyHeaderHiddenState, UI_CONSTANTS.OBSERVER_INIT_DELAY);
+
+    // 创建观察者监听DOM变化
+    const observer = new MutationObserver(() => {
+      applyHeaderHiddenState();
+    });
+
+    // 开始观察整个文档
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    console.log("[AutoLike] 顶栏隐藏监听器已启动");
   }
 
   // ======================
@@ -369,6 +432,7 @@
   间隔: ${config.minInterval} ~ ${config.maxInterval} 秒
   每小时自动: ${config.autoRepeatHourly ? "✅ 是" : "❌ 否"}
   礼物屏蔽: ${config.isGiftBlocked ? "✅ 是" : "❌ 否"}
+  顶栏隐藏: ${config.isHeaderHidden ? "✅ 是" : "❌ 否"}
     `.trim();
 
     alert(configMessage);
@@ -381,6 +445,9 @@
   // 初始化礼物屏蔽监听器
   setupGiftBlockObserver();
 
+  // 初始化顶栏隐藏监听器
+  setupHeaderHiddenObserver();
+
   // 初始化防闲置功能
   preventIdleMode();
 
@@ -389,4 +456,5 @@
   GM_registerMenuCommand("开启循环点赞", startAutoDoubleClick);
   GM_registerMenuCommand("查看当前配置", showConfigInfo);
   GM_registerMenuCommand("切换礼物屏蔽", toggleGiftBlocking);
+  GM_registerMenuCommand("切换顶栏隐藏", toggleHeaderHidden);
 })();
