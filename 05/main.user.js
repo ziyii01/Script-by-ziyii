@@ -47,6 +47,7 @@
   const UI_CONSTANTS = {
     GIFT_CONTAINER_ID: "BottomLayout",
     HEADER_LAYOUT_ID: "HeaderLayout", // 顶栏元素ID
+    PLAYER_LAYOUT_ID: "PlayerLayout", // 播放器布局元素ID
     TIP_DURATION: 3000, // 提示显示时长（毫秒）
     TIP_FADE_DURATION: 500, // 提示淡出时长（毫秒）
     HOURLY_INTERVAL: 3600000, // 1小时的毫秒数
@@ -204,9 +205,15 @@
   function applyHeaderHiddenState() {
     const { isHeaderHidden } = getConfig();
     const headerLayout = document.getElementById(UI_CONSTANTS.HEADER_LAYOUT_ID);
+    const playerLayout = document.getElementById(UI_CONSTANTS.PLAYER_LAYOUT_ID);
 
     if (headerLayout) {
       headerLayout.style.display = isHeaderHidden ? "none" : "";
+    }
+
+    // 调整PlayerLayout下第一个div的padding-top
+    if (playerLayout && playerLayout.firstElementChild) {
+      playerLayout.firstElementChild.style.paddingTop = isHeaderHidden ? "0px" : "50px";
     }
   }
 
@@ -216,11 +223,17 @@
   function toggleHeaderHidden() {
     let { isHeaderHidden } = getConfig();
     const headerLayout = document.getElementById(UI_CONSTANTS.HEADER_LAYOUT_ID);
+    const playerLayout = document.getElementById(UI_CONSTANTS.PLAYER_LAYOUT_ID);
 
     if (headerLayout) {
       isHeaderHidden = !isHeaderHidden;
       setConfig(CONFIG_KEYS.HEADER_HIDDEN, isHeaderHidden);
       headerLayout.style.display = isHeaderHidden ? "none" : "";
+
+      // 调整PlayerLayout下第一个div的padding-top
+      if (playerLayout && playerLayout.firstElementChild) {
+        playerLayout.firstElementChild.style.paddingTop = isHeaderHidden ? "0px" : "50px";
+      }
 
       GM_notification({
         text: isHeaderHidden ? "已隐藏顶栏" : "已显示顶栏",
