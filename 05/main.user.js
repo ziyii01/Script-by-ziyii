@@ -303,7 +303,11 @@
    */
   function simulateClick(x, y) {
     try {
-      const targetElement = document.elementFromPoint(x, y);
+      // 添加1-5像素的随机偏移
+      const randomX = x + Math.floor(Math.random() * 5) + 1;
+      const randomY = y + Math.floor(Math.random() * 5) + 1;
+
+      const targetElement = document.elementFromPoint(randomX, randomY);
 
       if (!targetElement) {
         console.warn("[AutoLike] 未在指定坐标找到目标元素，跳过本次点击");
@@ -314,8 +318,8 @@
       const clickEvent = new MouseEvent("click", {
         bubbles: true,
         cancelable: true,
-        clientX: x,
-        clientY: y,
+        clientX: randomX,
+        clientY: randomY,
         button: 0, // 鼠标左键
       });
 
