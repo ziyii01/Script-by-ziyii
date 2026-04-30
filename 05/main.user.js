@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.28
+// @version      2026.04.30.15.31
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
 // @icon         https://p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/favicon.png
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_notification
 // @grant        GM_registerMenuCommand
 // @updateURL    https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/05/main.user.js
 // @downloadURL  https://raw.githubusercontent.com/ziyii01/Script-by-ziyii/main/05/main.user.js
@@ -174,10 +173,7 @@
       setConfig(CONFIG_KEYS.GIFT_BLOCKED, isGiftBlocked);
       giftContainer.style.display = isGiftBlocked ? "none" : "";
 
-      GM_notification({
-        text: isGiftBlocked ? "已屏蔽礼物" : "已取消屏蔽礼物",
-        timeout: 5000,
-      });
+      showTemporaryTip(isGiftBlocked ? "已屏蔽礼物" : "已取消屏蔽礼物");
     }
   }
 
@@ -246,10 +242,7 @@
           : "50px";
       }
 
-      GM_notification({
-        text: isHeaderHidden ? "已隐藏顶栏" : "已显示顶栏",
-        timeout: 5000,
-      });
+      showTemporaryTip(isHeaderHidden ? "已隐藏顶栏" : "已显示顶栏");
     }
   }
 
