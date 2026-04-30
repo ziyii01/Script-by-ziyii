@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.44
+// @version      2026.04.30.15.52
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -290,6 +290,7 @@
 
     // 模拟鼠标移动（极微小幅度）
     function simulateMouseMove() {
+      log("正在模拟鼠标移动...");
       document.dispatchEvent(
         new MouseEvent("mousemove", {
           view: window,
@@ -300,9 +301,10 @@
         }),
       );
 
-      log("模拟鼠标移动:", mousePos);
+      log("模拟鼠标移动完成:", mousePos);
     }
     function simulateKeyboardActivity() {
+      log("正在模拟键盘活动...");
       window.dispatchEvent(
         new KeyboardEvent("keydown", {
           key: " ",
@@ -312,7 +314,7 @@
         }),
       );
 
-      log("模拟键盘活动");
+      log("模拟键盘活动完成");
     }
     function randomAction() {
       Math.random() > 0.5 ? simulateMouseMove() : simulateKeyboardActivity();
