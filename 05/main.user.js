@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.52
+// @version      2026.04.30.16.02
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -285,19 +285,22 @@
     }
     const randomOffset = () => (Math.random() > 0.5 ? 1 : -1); // 随机返回1或-1
 
-    const { clickX, clickY } = getConfig();
-    const mousePos = { x: clickX, y: clickY }; // 初始鼠标位置
+    let mousePos = { x: 0, y: 0 };
 
     // 模拟鼠标移动（极微小幅度）
     function simulateMouseMove() {
       log("正在模拟鼠标移动...");
+
+      mousePos.x += randomOffset();
+      mousePos.y += randomOffset();
+
       document.dispatchEvent(
         new MouseEvent("mousemove", {
           view: window,
           bubbles: true,
           cancelable: true,
-          clientX: mousePos.x + randomOffset(),
-          clientY: mousePos.y + randomOffset(),
+          clientX: mousePos.x,
+          clientY: mousePos.y,
         }),
       );
 
@@ -305,6 +308,7 @@
     }
     function simulateKeyboardActivity() {
       log("正在模拟键盘活动...");
+
       window.dispatchEvent(
         new KeyboardEvent("keydown", {
           key: " ",
