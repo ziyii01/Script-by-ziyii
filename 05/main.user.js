@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.41
+// @version      2026.04.30.15.44
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -279,13 +279,13 @@
   function preventIdleMode() {
     // 如果已有定时器在运行，先清除
     if (antiIdleTimer) {
+      log("已清除防闲置定时器");
       clearTimeout(antiIdleTimer);
       antiIdleTimer = null;
     }
     const randomOffset = () => (Math.random() > 0.5 ? 1 : -1); // 随机返回1或-1
 
-    const { clickX = window.innerWidth / 2, clickY = window.innerHeight / 2 } =
-      getConfig() || {};
+    const { clickX, clickY } = getConfig();
     const mousePos = { x: clickX, y: clickY }; // 初始鼠标位置
 
     // 模拟鼠标移动（极微小幅度）
