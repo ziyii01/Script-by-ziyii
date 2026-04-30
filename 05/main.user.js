@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.14.49
+// @version      2026.04.30.15.23
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -102,6 +102,13 @@
   }
 
   // ======================
+  // log 输出
+  // ======================
+  function log(...args) {
+    console.log("[抖音优化、自动化]", ...args);
+  }
+
+  // ======================
   // UI工具函数
   // ======================
 
@@ -192,7 +199,7 @@
       subtree: true,
     });
 
-    console.log("[AutoLike] 礼物屏蔽监听器已启动");
+    log("礼物屏蔽监听器已启动");
   }
 
   // ======================
@@ -264,7 +271,7 @@
       subtree: true,
     });
 
-    console.log("[AutoLike] 顶栏隐藏监听器已启动");
+    log("顶栏隐藏监听器已启动");
   }
 
   // ======================
@@ -302,7 +309,7 @@
         }),
       );
 
-      console.log("模拟鼠标移动:", mousePos);
+      log("模拟鼠标移动:", mousePos);
     }
     function simulateKeyboardActivity() {
       window.dispatchEvent(
@@ -314,12 +321,13 @@
         }),
       );
 
-      console.log("模拟键盘活动");
+      log("模拟键盘活动");
     }
     function randomAction() {
       Math.random() > 0.5 ? simulateMouseMove() : simulateKeyboardActivity();
       // 安排下一次模拟
       antiIdleTimer = setTimeout(randomAction, UI_CONSTANTS.ANTI_IDLE_INTERVAL);
+      log("下一次防闲置模拟安排在", UI_CONSTANTS.ANTI_IDLE_INTERVAL, "毫秒后");
     }
 
     randomAction();
@@ -332,7 +340,7 @@
     if (antiIdleTimer) {
       clearTimeout(antiIdleTimer);
       antiIdleTimer = null;
-      console.log("[AutoLike] 防闲置功能已暂停");
+      log("防闲置功能已暂停");
     }
   }
 
@@ -419,7 +427,7 @@
       // 执行当前组的双击
       executeDoubleClickGroup(clickX, clickY);
 
-      console.log(`[AutoLike] 已完成第 ${clickGroupsCompleted} 组双击`);
+      log(`[AutoLike] 已完成第 ${clickGroupsCompleted} 组双击`);
 
       // 检查是否达到最大组数
       if (clickGroupsCompleted <= maxCount) {
@@ -431,7 +439,7 @@
       } else {
         // 点赞完成后，重新开启防闲置功能
         preventIdleMode();
-        console.log("[AutoLike] 点赞完成，防闲置功能已恢复");
+        log("[AutoLike] 点赞完成，防闲置功能已恢复");
       }
     }
 
@@ -461,7 +469,7 @@
    */
   function setupCoordinateCapture() {
     showTemporaryTip("请点击页面上的点赞按钮位置…");
-    console.log("[AutoLike] 请在页面上点击你要设置的点赞位置");
+    log("[AutoLike] 请在页面上点击你要设置的点赞位置");
 
     const handleCoordinateClick = (event) => {
       event.preventDefault();
@@ -474,7 +482,7 @@
       GM_setValue(CONFIG_KEYS.CLICK_Y, y);
 
       showTemporaryTip(`✅ 坐标已设为 (${x}, ${y})`);
-      console.log(`[AutoLike] 坐标保存: X=${x}, Y=${y}`);
+      log(`[AutoLike] 坐标保存: X=${x}, Y=${y}`);
 
       // 捕获坐标后移除监听器
       document.removeEventListener("click", handleCoordinateClick, true);
