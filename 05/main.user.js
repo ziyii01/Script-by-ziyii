@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.31
+// @version      2026.04.30.15.41
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -284,21 +284,19 @@
     }
     const randomOffset = () => (Math.random() > 0.5 ? 1 : -1); // 随机返回1或-1
 
-    const { clickX, clickY } = getConfig();
+    const { clickX = window.innerWidth / 2, clickY = window.innerHeight / 2 } =
+      getConfig() || {};
     const mousePos = { x: clickX, y: clickY }; // 初始鼠标位置
 
     // 模拟鼠标移动（极微小幅度）
     function simulateMouseMove() {
-      mousePos.x += randomOffset();
-      mousePos.y += randomOffset();
-
       document.dispatchEvent(
         new MouseEvent("mousemove", {
           view: window,
           bubbles: true,
           cancelable: true,
-          clientX: mousePos.x,
-          clientY: mousePos.y,
+          clientX: mousePos.x + randomOffset(),
+          clientY: mousePos.y + randomOffset(),
         }),
       );
 
@@ -308,7 +306,7 @@
       window.dispatchEvent(
         new KeyboardEvent("keydown", {
           key: " ",
-          keyCode: 32,
+          code: "Space",
           bubbles: true,
           cancelable: true,
         }),
@@ -513,15 +511,15 @@
 
   // 初始化礼物屏蔽监听器
   setupGiftBlockObserver();
-  log("[AutoLike] 礼物屏蔽功能已初始化");
+  log("礼物屏蔽功能已初始化");
 
   // 初始化顶栏隐藏监听器
   setupHeaderHiddenObserver();
-  log("[AutoLike] 顶栏隐藏功能已初始化");
+  log("顶栏隐藏功能已初始化");
 
   // 初始化防闲置功能
   preventIdleMode();
-  log("[AutoLike] 防闲置功能已初始化");
+  log("防闲置功能已初始化");
 
   // 注册油猴菜单命令
   GM_registerMenuCommand("设置点赞位置", setupCoordinateCapture);
@@ -529,5 +527,5 @@
   GM_registerMenuCommand("查看当前配置", showConfigInfo);
   GM_registerMenuCommand("切换礼物屏蔽", toggleGiftBlocking);
   GM_registerMenuCommand("切换顶栏隐藏", toggleHeaderHidden);
-  log("[AutoLike] 菜单命令已注册");
+  log("菜单命令已注册");
 })();
