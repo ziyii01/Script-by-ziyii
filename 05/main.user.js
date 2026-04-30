@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.15.23
+// @version      2026.04.30.15.28
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -362,7 +362,7 @@
       const targetElement = document.elementFromPoint(randomX, randomY);
 
       if (!targetElement) {
-        console.warn("[AutoLike] 未在指定坐标找到目标元素，跳过本次点击");
+        console.warn("未在指定坐标找到目标元素，跳过本次点击");
         return;
       }
 
@@ -377,7 +377,7 @@
 
       targetElement.dispatchEvent(clickEvent);
     } catch (error) {
-      console.error("[AutoLike] 点击模拟失败：", error);
+      console.error("点击模拟失败：", error);
     }
   }
 
@@ -427,7 +427,7 @@
       // 执行当前组的双击
       executeDoubleClickGroup(clickX, clickY);
 
-      log(`[AutoLike] 已完成第 ${clickGroupsCompleted} 组双击`);
+      log(`已完成第 ${clickGroupsCompleted} 组双击`);
 
       // 检查是否达到最大组数
       if (clickGroupsCompleted <= maxCount) {
@@ -439,7 +439,7 @@
       } else {
         // 点赞完成后，重新开启防闲置功能
         preventIdleMode();
-        log("[AutoLike] 点赞完成，防闲置功能已恢复");
+        log("点赞完成，防闲置功能已恢复");
       }
     }
 
@@ -469,7 +469,7 @@
    */
   function setupCoordinateCapture() {
     showTemporaryTip("请点击页面上的点赞按钮位置…");
-    log("[AutoLike] 请在页面上点击你要设置的点赞位置");
+    log("请在页面上点击你要设置的点赞位置");
 
     const handleCoordinateClick = (event) => {
       event.preventDefault();
@@ -482,7 +482,7 @@
       GM_setValue(CONFIG_KEYS.CLICK_Y, y);
 
       showTemporaryTip(`✅ 坐标已设为 (${x}, ${y})`);
-      log(`[AutoLike] 坐标保存: X=${x}, Y=${y}`);
+      log(`坐标保存: X=${x}, Y=${y}`);
 
       // 捕获坐标后移除监听器
       document.removeEventListener("click", handleCoordinateClick, true);
@@ -520,12 +520,15 @@
 
   // 初始化礼物屏蔽监听器
   setupGiftBlockObserver();
+  log("[AutoLike] 礼物屏蔽功能已初始化");
 
   // 初始化顶栏隐藏监听器
   setupHeaderHiddenObserver();
+  log("[AutoLike] 顶栏隐藏功能已初始化");
 
   // 初始化防闲置功能
   preventIdleMode();
+  log("[AutoLike] 防闲置功能已初始化");
 
   // 注册油猴菜单命令
   GM_registerMenuCommand("设置点赞位置", setupCoordinateCapture);
@@ -533,4 +536,5 @@
   GM_registerMenuCommand("查看当前配置", showConfigInfo);
   GM_registerMenuCommand("切换礼物屏蔽", toggleGiftBlocking);
   GM_registerMenuCommand("切换顶栏隐藏", toggleHeaderHidden);
+  log("[AutoLike] 菜单命令已注册");
 })();
