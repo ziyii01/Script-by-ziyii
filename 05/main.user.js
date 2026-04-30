@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.03.24
+// @version      2026.04.30
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -53,7 +53,7 @@
     HOURLY_INTERVAL: 3600000, // 1小时的毫秒数
     DOUBLE_CLICK_DELAY: 10, // 双击之间的延迟（毫秒）
     OBSERVER_INIT_DELAY: 1000, // 观察者初始化延迟（毫秒）
-    ANTI_IDLE_INTERVAL: 60000, // 防闲置键盘模拟间隔（毫秒）
+    ANTI_IDLE_INTERVAL: 3000, // 防闲置键盘模拟间隔（毫秒）
   };
 
   // ======================
@@ -213,7 +213,9 @@
 
     // 调整PlayerLayout下第一个div的padding-top
     if (playerLayout && playerLayout.firstElementChild) {
-      playerLayout.firstElementChild.style.paddingTop = isHeaderHidden ? "0px" : "50px";
+      playerLayout.firstElementChild.style.paddingTop = isHeaderHidden
+        ? "0px"
+        : "50px";
     }
   }
 
@@ -232,7 +234,9 @@
 
       // 调整PlayerLayout下第一个div的padding-top
       if (playerLayout && playerLayout.firstElementChild) {
-        playerLayout.firstElementChild.style.paddingTop = isHeaderHidden ? "0px" : "50px";
+        playerLayout.firstElementChild.style.paddingTop = isHeaderHidden
+          ? "0px"
+          : "50px";
       }
 
       GM_notification({
@@ -270,26 +274,62 @@
   /**
    * 模拟键盘活动以防止进入闲置/睡眠模式
    */
+  let antiIdleTimer = null; // 存储防闲置定时器ID
+
   function preventIdleMode() {
-    function simulateSpaceKey() {
-      const spaceEvent = new KeyboardEvent("keydown", {
-        key: " ",
-        code: "Space",
-        keyCode: 32,
-        which: 32,
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-      });
-
-      window.dispatchEvent(spaceEvent);
-      console.log("✅ 模拟键盘活动：空格键");
-
-      // 安排下一次模拟
-      setTimeout(simulateSpaceKey, UI_CONSTANTS.ANTI_IDLE_INTERVAL);
+    // 如果已有定时器在运行，先清除
+    if (antiIdleTimer) {
+      clearTimeout(antiIdleTimer);
+      antiIdleTimer = null;
     }
 
-    simulateSpaceKey();
+    // 模拟鼠标移动（极微小幅度）
+    function simulateMouseMove() {
+      mousePos.x += randomOffset();
+      mousePos.y += randomOffset();
+
+      document.dispatchEvent(
+        new MouseEvent("mousemove", {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+          clientX: mousePos.x,
+          clientY: mousePos.y,
+        }),
+      );
+
+      console.log("模拟鼠标移动:", mousePos);
+    }
+    function simulateKeyboardActivity() {
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", {
+          key: " ",
+          keyCode: 32,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+
+      console.log("模拟键盘活动");
+    }
+    function randomAction() {
+      Math.random() > 0.5 ? simulateMouseMove() : simulateKeyboardActivity();
+      // 安排下一次模拟
+      antiIdleTimer = setTimeout(randomAction, UI_CONSTANTS.ANTI_IDLE_INTERVAL);
+    }
+
+    randomAction();
+  }
+
+  /**
+   * 停止防闲置功能
+   */
+  function stopAntiIdleMode() {
+    if (antiIdleTimer) {
+      clearTimeout(antiIdleTimer);
+      antiIdleTimer = null;
+      console.log("[AutoLike] 防闲置功能已暂停");
+    }
   }
 
   // ======================
@@ -357,6 +397,9 @@
    * 启动带递归执行的自动双击循环
    */
   function startAutoDoubleClick() {
+    // 开启点赞时，暂停防闲置功能
+    stopAntiIdleMode();
+
     let clickGroupsCompleted = 0;
     const startTime = Date.now();
     const config = getConfig();
@@ -381,6 +424,10 @@
 
         // 安排下一组双击
         setTimeout(executeNextClickGroup, nextInterval);
+      } else {
+        // 点赞完成后，重新开启防闲置功能
+        preventIdleMode();
+        console.log("[AutoLike] 点赞完成，防闲置功能已恢复");
       }
     }
 
