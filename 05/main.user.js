@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化、自动化
 // @namespace    https://github.com/ziyii01/Script-by-ziyii
-// @version      2026.04.30.16.02
+// @version      2026.04.30.16.04
 // @description  抖音优化、自动化
 // @author       ziyii
 // @match        *://live.douyin.com/*
@@ -283,29 +283,7 @@
       clearTimeout(antiIdleTimer);
       antiIdleTimer = null;
     }
-    const randomOffset = () => (Math.random() > 0.5 ? 1 : -1); // 随机返回1或-1
 
-    let mousePos = { x: 0, y: 0 };
-
-    // 模拟鼠标移动（极微小幅度）
-    function simulateMouseMove() {
-      log("正在模拟鼠标移动...");
-
-      mousePos.x += randomOffset();
-      mousePos.y += randomOffset();
-
-      document.dispatchEvent(
-        new MouseEvent("mousemove", {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-          clientX: mousePos.x,
-          clientY: mousePos.y,
-        }),
-      );
-
-      log("模拟鼠标移动完成:", mousePos);
-    }
     function simulateKeyboardActivity() {
       log("正在模拟键盘活动...");
 
@@ -321,7 +299,7 @@
       log("模拟键盘活动完成");
     }
     function randomAction() {
-      Math.random() > 0.5 ? simulateMouseMove() : simulateKeyboardActivity();
+      simulateKeyboardActivity();
       // 安排下一次模拟
       antiIdleTimer = setTimeout(randomAction, UI_CONSTANTS.ANTI_IDLE_INTERVAL);
       log("下一次防闲置模拟安排在", UI_CONSTANTS.ANTI_IDLE_INTERVAL, "毫秒后");
